@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(
+                135deg,
+                #ff6f91 0%,
+                #87ceeb 20%,
+                #7fffd4 40%,
+                #ffd700 60%,
+                #ff69b4 80%,
+                #ffb6c1 100%
+            );
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
+            font-family: 'Bubblegum Sans', cursive;
+            overflow: hidden;
+            position: relative;
+        }
+        #backgroundCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .lilypad {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, #228b22, #32cd32);
+            border-radius: 50%;
+            top: 80%;
+            left: 15%;
+            animation: floatLilypad 4s infinite;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+            z-index: 1;
+        }
+        .lilypad.right {
+            left: auto;
+            right: 15%;
+            animation: floatLilypad 3.5s infinite;
+        }
+        .lilypad.extra {
+            top: 70%;
+            left: 30%;
+            animation: floatLilypad 4.5s infinite;
+        }
+        .lilypad.extra2 {
+            top: 85%;
+            right: 30%;
+            animation: floatLilypad 3.8s infinite;
+        }
+        .cupcake {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #ff69b4, #fff);
+            border-radius: 50% 50% 0 0;
+            top: 10%;
+            left: 10%;
+            animation: floatCupcake 4s infinite;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1;
+        }
+        .cupcake::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 10px;
+            background: #8b4513;
+            border-radius: 5px;
+        }
+        .cupcake.right {
+            left: auto;
+            right: 10%;
+            animation: floatCupcake 3.5s infinite;
+        }
+        .cupcake.wobble {
+            animation: wobbleCupcake 0.5s;
+        }
+        h1 {
+            color: #ff1493;
+            font-size: 3.5em;
+            text-shadow: 2px 2px #ffd700, -2px -2px #00ff00;
+            animation: popText 0.6s infinite;
+            z-index: 3;
+            margin-bottom: 20px;
+        }
+        .character {
+            position: relative;
+            width: 240px;
+            height: 340px;
+            text-align: center;
+            z-index: 2;
+            cursor: pointer;
+        }
+        .face {
+            width: 80px;
+            height: 80px;
+            background-image: url('p8.jpg'); /* Replace this path with your image */
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            border: 3px solid #000;
+            animation: squishFace 0.7s infinite;
+        }
+        .eyes {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-between;
+            width: 120px;
+            z-index: 4;
+        }
+        .eye {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #fff 20%, #90ee90 50%);
+            border-radius: 50%;
+            border: 3px solid #000;
+            position: relative;
+            animation: wobbleEyes 0.5s infinite;
+        }
+        .eye::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 15px;
+            height: 15px;
+            background: #000;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #fff;
+        }
+        .hat {
+            width: 50px;
+            height: 50px;
+            background: conic-gradient(#ff69b4 0deg 120deg, #00ff00 120deg 240deg, #1e90ff 240deg);
+            clip-path: polygon(50% 0%, 20% 100%, 80% 100%);
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) rotate(5deg);
+            z-index: 4;
+            animation: hatBob 0.5s infinite;
+        }
+        .body {
+            width: 160px;
+            height: 200px;
+            background: radial-gradient(circle, #32cd32, #228b22);
+            border-radius: 50% 50% 40% 40%;
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: hop 0.6s infinite;
+            border: 3px solid #000;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .belly {
+            width: 120px;
+            height: 120px;
+            background: #90ee90;
+            border-radius: 50%;
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bellyJiggle 0.4s infinite;
+        }
+        .tongue {
+            width: 30px;
+            height: 50px;
+            background: radial-gradient(circle, #ff4040, #ff6666);
+            border-radius: 15px;
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            animation: tongueFlop 0.5s infinite;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .legs {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+        .leg {
+            width: 60px;
+            height: 80px;
+            background: radial-gradient(circle, #32cd32, #228b22);
+            border-radius: 20px;
+            border: 3px solid #000;
+        }
+        .leg.left {
+            animation: kickLeft 0.4s infinite;
+        }
+        .leg.right {
+            animation: kickRight 0.4s infinite;
+        }
+        .feet {
+            position: absolute;
+            bottom: -20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+        .foot {
+            width: 70px;
+            height: 30px;
+            background: radial-gradient(circle, #32cd32, #228b22);
+            border-radius: 15px;
+            border: 2px solid #000;
+            position: relative;
+        }
+        .foot::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: #000;
+            opacity: 0.5;
+        }
+        .foot.left {
+            transform: rotate(20deg);
+            animation: shuffleLeft 0.5s infinite;
+        }
+        .foot.right {
+            transform: rotate(-20deg);
+            animation: shuffleRight 0.5s infinite;
+        }
+        .balloon {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            background: radial-gradient(circle, #ff69b4, #ffb6c1);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: floatBalloon 2.5s infinite;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            width: 2px;
+            height: 30px;
+            background: #333;
+        }
+        .balloon.right {
+            background: radial-gradient(circle, #1e90ff, #b0e0e6);
+            animation: floatBalloon 3s infinite;
+        }
+        .balloon.extra {
+            background: radial-gradient(circle, #ffd700, #fffacd);
+            animation: floatBalloon 2.8s infinite;
+        }
+        .balloon.extra2 {
+            background: radial-gradient(circle, #00ff00, #98fb98);
+            animation: floatBalloon 3.2s infinite;
+        }
+        #confettiCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #fff, transparent);
+            border-radius: 50%;
+            z-index: 2;
+            pointer-events: none;
+            animation: sparkleFade 1s ease-out forwards;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes popText {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(5deg); }
+        }
+        @keyframes hop {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-25px); }
+        }
+        @keyframes squishFace {
+            0%, 100% { transform: translateX(-50%) scale(1, 1); }
+            50% { transform: translateX(-50%) scale(1.1, 0.9); }
+        }
+        @keyframes hatBob {
+            0%, 100% { transform: translateX(-50%) rotate(5deg); }
+            50% { transform: translateX(-50%) rotate(-5deg); }
+        }
+        @keyframes bellyJiggle {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.2, 1.1); }
+        }
+        @keyframes tongueFlop {
+            0%, 100% { transform: translateX(-50%) rotate(10deg) translateY(0); }
+            50% { transform: translateX(-50%) rotate(-10deg) translateY(5px); }
+        }
+        @keyframes wobbleEyes {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes kickLeft {
+            0%, 100% { transform: rotate(15deg); }
+            50% { transform: rotate(-15deg); }
+        }
+        @keyframes kickRight {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+        }
+        @keyframes shuffleLeft {
+            0%, 100% { transform: rotate(20deg) translateY(0); }
+            50% { transform: rotate(20deg) translateY(-10px); }
+        }
+        @keyframes shuffleRight {
+            0%, 100% { transform: rotate(-20deg) translateY(-10px); }
+            50% { transform: rotate(-20deg) translateY(0); }
+        }
+        @keyframes floatBalloon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes floatCupcake {
+            0%, 100% { transform: translateY(0) rotate(2deg); }
+            50% { transform: translateY(-20px) rotate(-2deg); }
+        }
+        @keyframes wobbleCupcake {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(5deg); }
+            75% { transform: translateY(-5px) rotate(-5deg); }
+        }
+        @keyframes floatLilypad {
+            0%, 100% { transform: translateY(0) rotate(1deg); }
+            50% { transform: translateY(-10px) rotate(-1deg); }
+        }
+        @keyframes bigHop {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+            50% { transform: translateX(-50%) translateY(-100px) scale(1.2); }
+        }
+        @keyframes sparkleFade {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div class="lilypad"></div>
+    <div class="lilypad right"></div>
+    <div class="lilypad extra"></div>
+    <div class="lilypad extra2"></div>
+    <div class="cupcake"></div>
+    <div class="cupcake right"></div>
+    <h1 id="birthdayMessage">HAPPY BIRTHDAYYY</h1>
+    <div class="character" id="frog">
+        <div class="hat"></div>
+        <div class="eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+        </div>
+        <div class="face"></div>
+        <div class="body">
+            <div class="belly"></div>
+            <div class="tongue"></div>
+            <div class="legs">
+                <div class="leg left"></div>
+                <div class="leg right"></div>
+            </div>
+            <div class="feet">
+                <div class="foot left"></div>
+                <div class="foot right"></div>
+            </div>
+        </div>
+    </div>
+    <div class="balloon" style="bottom: 10px; left: 20px;"></div>
+    <div class="balloon right" style="bottom: 10px; right: 20px;"></div>
+    <div class="balloon extra" style="bottom: 50px; left: 100px;"></div>
+    <div class="balloon extra" style="bottom: 30px; right: 100px;"></div>
+    <div class="balloon extra2" style="bottom: 80px; left: 50px;"></div>
+    <div class="balloon extra2" style="bottom: 60px; right: 50px;"></div>
+    <canvas id="confettiCanvas"></canvas>
+    <script>
+        // Background canvas for stars and ripples
+        const bgCanvas = document.getElementById('backgroundCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+
+        const stars = [];
+        const ripples = [];
+        class Star {
+            constructor() {
+                this.x = Math.random() * bgCanvas.width;
+                this.y = Math.random() * bgCanvas.height;
+                this.radius = Math.random() * 2 + 1;
+                this.opacity = Math.random() * 0.5 + 0.3;
+                this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+                this.phase = Math.random() * Math.PI * 2;
+            }
+            update() {
+                this.opacity = 0.3 + 0.5 * Math.sin(this.phase);
+                this.phase += this.twinkleSpeed;
+            }
+            draw() {
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                bgCtx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                bgCtx.fill();
+            }
+        }
+        class Ripple {
+            constructor() {
+                this.x = Math.random() * bgCanvas.width;
+                this.y = Math.random() * bgCanvas.height;
+                this.radius = 0;
+                this.maxRadius = Math.random() * 50 + 50;
+                this.speed = Math.random() * 0.5 + 0.5;
+                this.opacity = 0.5;
+            }
+            update() {
+                this.radius += this.speed;
+                this.opacity -= 0.005;
+                if (this.radius > this.maxRadius) {
+                    this.radius = 0;
+                    this.x = Math.random() * bgCanvas.width;
+                    this.y = Math.random() * bgCanvas.height;
+                    this.opacity = 0.5;
+                    this.maxRadius = Math.random() * 50 + 50;
+                    this.speed = Math.random() * 0.5 + 0.5;
+                }
+            }
+            draw() {
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                bgCtx.strokeStyle = `rgba(135, 206, 235, ${this.opacity})`;
+                bgCtx.lineWidth = 2;
+                bgCtx.stroke();
+            }
+        }
+
+        for (let i = 0; i < 50; i++) {
+            stars.push(new Star());
+        }
+        for (let i = 0; i < 10; i++) {
+            ripples.push(new Ripple());
+        }
+
+        function animateBackground() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            ripples.forEach(ripple => {
+                ripple.update();
+                ripple.draw();
+            });
+            requestAnimationFrame(animateBackground);
+        }
+        animateBackground();
+
+        // Confetti effect
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const confetti = [];
+        const colors = ['#ff69b4', '#00ff00', '#1e90ff', '#ffd700', '#ff1493'];
+        class Confetti {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.speed = Math.random() * 5 + 2;
+                this.size = Math.random() * 10 + 5;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = (Math.random() - 0.5) * 0.1;
+            }
+            update() {
+                this.y += this.speed;
+                this.x += Math.sin(this.angle) * 2;
+                this.angle += this.spin;
+                if (this.y > canvas.height + this.size) {
+                    this.y = -this.size;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 150; i++) {
+            confetti.push(new Confetti());
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confetti.forEach(c => {
+                c.update();
+                c.draw();
+            });
+            requestAnimationFrame(animateConfetti);
+        }
+        animateConfetti();
+
+        // Frog bounce and sound
+        const frog = document.getElementById('frog');
+        const body = frog.querySelector('.body');
+        let isBouncing = false;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playRibbit() {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.currentTime ? audioCtx.destination : audioCtx);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+
+        frog.addEventListener('click', () => {
+            if (!isBouncing) {
+                isBouncing = true;
+                body.style.animation = 'bigHop 0.6s ease-in-out';
+                playRibbit();
+                createSparkles();
+                setTimeout(() => {
+                    body.style.animation = 'hop 0.6s infinite';
+                    isBouncing = false;
+                }, 600);
+            }
+        });
+
+        // Sparkle effect around frog
+        function createSparkles() {
+            const frogRect = frog.getBoundingClientRect();
+            const centerX = frogRect.left + frogRect.width / 2;
+            const centerY = frogRect.top + frogRect.height / 2;
+            for (let i = 0; i < 10; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 50 + 50;
+                sparkle.style.left = `${centerX + Math.cos(angle) * distance}px`;
+                sparkle.style.top = `${centerY + Math.sin(angle) * distance}px`;
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 1000);
+            }
+        }
+
+        // Cupcake wobble on click
+        const cupcakes = document.querySelectorAll('.cupcake');
+        cupcakes.forEach(cupcake => {
+            cupcake.addEventListener('click', () => {
+                cupcake.classList.add('wobble');
+                playPopSound();
+                setTimeout(() => cupcake.classList.remove('wobble'), 500);
+            });
+        });
+
+        function playPopSound() {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.currentTime ? audioCtx.destination : audioCtx);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // Typing effect for birthday message
+        const messageElement = document.getElementById('birthdayMessage');
+        const messages = ['HAPPY BIRTHDAYyYY!'];
+        let currentMessage = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeMessage() {
+            const text = messages[currentMessage];
+            if (isDeleting) {
+                messageElement.textContent = text.substring(0, charIndex--);
+                if (charIndex < 0) {
+                    isDeleting = false;
+                    currentMessage = (currentMessage + 1) % messages.length;
+                    setTimeout(typeMessage, 500);
+                } else {
+                    setTimeout(typeMessage, 50);
+                }
+            } else {
+                messageElement.textContent = text.substring(0, charIndex++);
+                if (charIndex > text.length) {
+                    isDeleting = true;
+                    setTimeout(typeMessage, 1000);
+                } else {
+                    setTimeout(typeMessage, 100);
+                }
+            }
+        }
+        typeMessage();
+
+        // Background music loop
+        function playBackgroundMusic() {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.currentTime ? audioCtx.destination : audioCtx);
+            oscillator.start();
+            setTimeout(() => {
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+                oscillator.stop(audioCtx.currentTime + 1);
+                setTimeout(playBackgroundMusic, 2000);
+            }, 2000);
+        }
+        playBackgroundMusic();
+
+        // Random lilypad movement
+        const lilypads = document.querySelectorAll('.lilypad');
+        lilypads.forEach(lilypad => {
+            lilypad.addEventListener('mouseover', () => {
+                const randomX = (Math.random() - 0.5) * 50;
+                const randomY = (Math.random() - 0.5) * 50;
+                lilypad.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                setTimeout(() => {
+                    lilypad.style.transform = '';
+                }, 300);
+            });
+        });
+
+        // Resize canvases on window resize
+        window.addEventListener('resize', () => {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
